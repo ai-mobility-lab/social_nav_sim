@@ -1,0 +1,116 @@
+environment:
+  # radius of the circle where all humans start on
+  radius: 6.0
+  # time limit of each episode (second)
+  time_limit: 50
+  # length of each timestep/control frequency (second)
+  time_step: 0.25
+  # total number of obstacles
+  num_obstacle: 5
+  # number of static obstacles
+  num_static: 1
+  # discomfort distance (m)
+  discomfort_dist: 0.25
+
+obstacle:
+  # manually set initial positions of obstacles
+  # obstacles without initial position will have random initial position
+  # ex) [[x1,y1], [x2,y2], ...]
+  initial_position_list: []
+  # model names of objects to be displayed as static obstacles in the simulator
+  # static obstacles without object model names will be displayed as standing humans
+  # candidate model names can be found in a parameter named "model_path_dict" stated below
+  # ex) ["oak_tree", "figurin_3", ...]
+  ## OBJECTS WITH AN INDEX LARGER THAN num_static WILL BE IGNORED ##
+  object_name_list: []
+  # check if obstacles determine their actions based on environment time step or not
+  is_env_in_sync: False
+  # obstacle manager's frequency
+  operating_frequency: 10.0
+
+  human:
+    # randomize the preferred velocity and radius of humans or not
+    randomize_attributes: True
+    # some of humans remain standing around a point making a circle
+    group_human: False
+    # policy to control the humans: orca or social_force
+    policy: "orca"
+    # humans' preferred velocity (m/s)
+    v_pref: 1.0
+    # size of a human (m)
+    radius: 0.3
+    # FOV of a human (rad/pi)
+    FOV: 2.0
+
+    # a human may change its goal before it reaches its old goal
+    random_goal_changing: True
+    goal_change_chance: 0.25
+
+    # a human may change its goal after it reaches its old goal
+    end_goal_changing: True
+    end_goal_change_chance: 1.0
+
+    # a human may change its radius and/or v_pref after it reaches its current goal
+    random_radii: False
+    random_v_pref: False
+
+    # one human may have a random chance to be blind to other agents at every time step
+    random_unobservability: False
+    unobservable_chance: 0.3
+
+    random_policy_changing: False
+
+  # policy settings
+  policy:
+    orca:
+      neighbor_dist: 10
+      safety_space: 0.15
+      time_horizon: 5
+      time_horizon_obst: 5
+
+    social_force:
+      A: 2.
+      B: 1
+      KI: 1
+
+  visual:
+    actor_default_height: 1.02
+    actor_skin_list: ["moonwalk.dae",
+                      "run.dae",
+                      "sit_down.dae",
+                      "sitting.dae",
+                      "stand_up.dae",
+                      "stand.dae",
+                      "talk_a.dae",
+                      "talk_b.dae",
+                      "walk.dae"]
+
+    # model paths' default root directory: social_nav_sim/assets/models
+    # scale is either a list of 3 items(x, y, z) or a float(uniformly applied along x, y, z)
+    model_path_dict:
+      - name: "oak_tree"
+        path: "model://oak_tree"
+
+      - name: "box"
+        path: "model://big_box"
+
+      - name: "debris"
+        path: "model://debris_1_2"
+        
+      - name: "mailbox"
+        path: "model://mailbox_red"
+
+      - name: "trash_bin"
+        path: "model://trash_bin"
+
+      - name: "vase"
+        path: "model://vase_large_2"
+
+      - name: "table"
+        path: "model://cafe_table"
+
+      - name: "fire_hydrant"
+        path: "model://fire_hydrant"
+
+      - name: "chair"
+        path: "model://aws_robomaker_residential_ChairD_01"

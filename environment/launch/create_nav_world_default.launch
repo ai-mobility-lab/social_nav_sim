@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+    <node name="create_world" pkg="environment" type="generate_social_nav_world.py"/>
+    <rosparam file="$(find environment)/param/default.yaml" />
+    <arg name="world_file"  default="$(find environment)/worlds/social_nav_env.world"/>
+    <arg name="gui" default="true"/>
+    
+    <node name="gazebo" pkg="gazebo_ros" type="gzserver" output="screen"
+        args="$(arg world_file)" />
+    
+    <!-- start gazebo client -->
+    <group if="$(arg gui)">
+        <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
+    </group>
+
+</launch>

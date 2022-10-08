@@ -1,0 +1,4 @@
+<launch>
+  <rosparam file="$(find agent)/param/default.yaml" />
+  <node pkg="agent" type="agent_node.py" name="agent_node" output="screen"/>
+</launch>

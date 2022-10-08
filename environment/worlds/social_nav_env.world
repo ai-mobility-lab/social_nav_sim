@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<sdf version="1.5">
+    <world name="default">
+        <gui>
+            <camera name="user_camera">
+                <pose>0 -18 8.0 0 0.523 1.5707</pose>
+            </camera>
+        </gui>
+        <light name="sun" type="directional">
+            <cast_shadows>1</cast_shadows>
+            <pose>0 0 10 0 -0 0</pose>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>0 0.5 -0.9</direction>
+        </light>
+
+        <light name="point_light" type="point">
+            <pose>0 -0.377195 6.59868 0 -0 0</pose>
+            <diffuse>0.784314 0.784314 0.784314 1</diffuse>
+            <specular>0.0980392 0.0980392 0.0980392 1</specular>
+            <attenuation>
+                <range>50</range>
+                <constant>0.8</constant>
+                <linear>0</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <cast_shadows>0</cast_shadows>
+            <direction>0 0 -1</direction>
+        </light>
+
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
+<actor name="obstacle_0"><pose>3.982940 4.972469 0.956967 0 0 0</pose><skin><filename>walk.dae</filename><scale>0.938203</scale></skin><animation name="walking"><filename>walk.dae</filename><scale>1</scale><interpolate_x>true</interpolate_x></animation><plugin name="control" filename="/home/changsik/catkin_ws/src/social_nav_sim/obstacle/animated_obstacle_plugin/lib/libanimated_obstacle_plugin_ros.so"><ignore_obstacles><model>ground_plane</model></ignore_obstacles><is_static>false</is_static></plugin></actor><actor name="obstacle_1"><pose>0.859458 -6.228633 1.060348 0 0 0</pose><skin><filename>talk_a.dae</filename><scale>1.039557</scale></skin><animation name="walking"><filename>walk.dae</filename><scale>1</scale><interpolate_x>true</interpolate_x></animation><plugin name="control" filename="/home/changsik/catkin_ws/src/social_nav_sim/obstacle/animated_obstacle_plugin/lib/libanimated_obstacle_plugin_ros.so"><ignore_obstacles><model>ground_plane</model></ignore_obstacles><is_static>false</is_static></plugin></actor><actor name="obstacle_2"><pose>-3.909647 -4.311022 0.955601 0 0 0</pose><skin><filename>stand.dae</filename><scale>0.936863</scale></skin><animation name="walking"><filename>walk.dae</filename><scale>1</scale><interpolate_x>true</interpolate_x></animation><plugin name="control" filename="/home/changsik/catkin_ws/src/social_nav_sim/obstacle/animated_obstacle_plugin/lib/libanimated_obstacle_plugin_ros.so"><ignore_obstacles><model>ground_plane</model></ignore_obstacles><is_static>false</is_static></plugin></actor><actor name="obstacle_3"><pose>-0.057602 6.016794 1.059808 0 0 0</pose><skin><filename>sit_down.dae</filename><scale>1.039028</scale></skin><animation name="walking"><filename>walk.dae</filename><scale>1</scale><interpolate_x>true</interpolate_x></animation><plugin name="control" filename="/home/changsik/catkin_ws/src/social_nav_sim/obstacle/animated_obstacle_plugin/lib/libanimated_obstacle_plugin_ros.so"><ignore_obstacles><model>ground_plane</model></ignore_obstacles><is_static>false</is_static></plugin></actor><actor name="obstacle_4"><pose>-6.285538 -0.440705 1.034998 0 0 0</pose><skin><filename>stand.dae</filename><scale>1.014704</scale></skin><animation name="walking"><filename>walk.dae</filename><scale>1</scale><interpolate_x>true</interpolate_x></animation><plugin name="control" filename="/home/changsik/catkin_ws/src/social_nav_sim/obstacle/animated_obstacle_plugin/lib/libanimated_obstacle_plugin_ros.so"><ignore_obstacles><model>ground_plane</model></ignore_obstacles><is_static>false</is_static></plugin></actor><include><name>goal</name><pose>-2.029784 5.092510 0 0 0 0</pose><uri>model://goal_marker</uri></include></world>
+</sdf>

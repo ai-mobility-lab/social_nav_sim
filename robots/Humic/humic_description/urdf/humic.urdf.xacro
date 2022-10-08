@@ -1,0 +1,1536 @@
+<?xml version="1.0"?>
+<robot name="humic" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- some parameters -->
+    <xacro:property name="pi" value="3.141592654" />
+    <xacro:arg name="gpu" default="false"/>
+    <xacro:property name="gpu" value="$(arg gpu)" />
+    <xacro:arg name="organize_cloud" default="false"/>
+    <xacro:property name="organize_cloud" value="$(arg organize_cloud)" />
+    <xacro:arg name="arms" default="true"/>
+    <xacro:property name="arms" value="$(arg arms)" />
+
+    <xacro:include filename="$(find humic_description)/urdf/materials.xacro"/>
+    <xacro:include filename="$(find humic_description)/urdf/humic.gazebo.xacro"/>
+    <xacro:if value="$(arg arms)">
+        <xacro:include filename="$(find humic_description)/urdf/humic.right_transmission.xacro"/>
+        <xacro:include filename="$(find humic_description)/urdf/humic.left_transmission.xacro"/>
+    </xacro:if>
+    <xacro:include filename="$(find humic_description)/urdf/humic.column_transmission.xacro"/>
+    <xacro:include filename="$(find humic_description)/urdf/humic.head_transmission.xacro"/>
+
+    <!-- base footprint -->
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+        <origin xyz="0 0 0.0945" rpy="0 0 0"/>
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+    </joint>
+
+    <!-- Mobile-Platform Body -->    
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://humic_description/meshes/STL/MobileBody.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://humic_description/meshes/STL/MobileBody.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="64.126"/>
+            <inertia ixx="2.43844e+08" iyy="2.46565e+09" izz="1.39943e+09" ixy="-3.45214e+06" ixz="9.87419e+06" iyz="-2.83701e+08"/>
+        </inertial>
+    </link>
+
+    <joint name="front_ultrasonic_joint" type="fixed">
+        <origin xyz="0.335 0 0.102" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_ultrasonic"/>
+    </joint>
+
+    <link name="front_ultrasonic">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.005 0.005"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+
+    <joint name="left_ultrasonic_joint" type="fixed">
+        <origin xyz="-0.01 0.1765 0.102" rpy="0 0 ${pi*0.5}"/>
+        <parent link="base_link"/>
+        <child link="left_ultrasonic"/>
+    </joint>
+
+    <link name="left_ultrasonic">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.005 0.005"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+
+    <joint name="right_ultrasonic_joint" type="fixed">
+        <origin xyz="-0.01 -0.1765 0.102" rpy="0 0 ${-pi*0.5}"/>
+        <parent link="base_link"/>
+        <child link="right_ultrasonic"/>
+    </joint>
+
+    <link name="right_ultrasonic">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.005 0.005"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+
+    <joint name="rear_ultrasonic_joint" type="fixed">
+        <origin xyz="-0.325 0 0.102" rpy="0 0 ${pi}"/>
+        <parent link="base_link"/>
+        <child link="rear_ultrasonic"/>
+    </joint>
+
+    <link name="rear_ultrasonic">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.005 0.005"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+
+    <!-- Mobile-Platform Wheel -->
+    <!-- front left & rear right couple-->
+    <!-- front right & rear left couple-->
+    <joint name="rear_left_wheel_joint" type="continuous"> 
+        <axis xyz="0 -1 0" />
+        <origin xyz="-0.2295 0.2295 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="rear_left_wheel_link"/>
+    </joint>
+
+    <link name="rear_left_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/wheel_rear_left.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi*0.5} 0 0"/>
+            <geometry>
+                <cylinder radius="0.108" length="0.0999"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1.414"/>
+            <inertia ixx="7.14710e+07" iyy="1.35915e+08" izz="7.08597e+07" ixy="0.0" ixz="-6.59371e+07" iyz="0.0"/>
+        </inertial>
+    </link>
+
+    <joint name="rear_right_wheel_joint" type="continuous">
+        <axis xyz="0 1 0" />
+        <origin xyz="-0.2295 -0.2295 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="rear_right_wheel_link"/>
+    </joint>
+
+    <link name="rear_right_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/wheel_rear_right.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi*0.5} 0 0"/>
+            <geometry>
+                <cylinder radius="0.108" length="0.0999"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1.662"/>
+            <inertia ixx="8.39093e+07" iyy="1.59927e+08" izz="8.34746e+07" ixy="0.0" ixz="7.74594e+07" iyz="0.0"/>
+        </inertial>
+    </link>
+
+    <joint name="front_right_wheel_joint" type="continuous">
+        <axis xyz="0 1 0" />
+        <origin xyz="0.2295 0.2295 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_right_wheel_link"/>
+    </joint>
+
+    <link name="front_right_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/wheel_front_right.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi*0.5} 0 0"/>
+            <geometry>
+                <cylinder radius="0.108" length="0.0999"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1.662"/>
+            <inertia ixx="8.39093e+07" iyy="1.59927e+08" izz="8.34746e+07" ixy="0.0" ixz="7.74594e+07" iyz="0.0"/>
+        </inertial>
+    </link>
+
+    <joint name="front_left_wheel_joint" type="continuous">
+        <axis xyz="0 -1 0" />
+        <origin xyz="0.2295 -0.2295 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_left_wheel_link"/>
+    </joint>
+
+    <link name="front_left_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/wheel_front_left.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi*0.5} 0 0"/>
+            <geometry>
+                <cylinder radius="0.108" length="0.0999"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1.414"/>
+            <inertia ixx="7.14710e+07" iyy="1.35915e+08" izz="7.08597e+07" ixy="0.0" ixz="-6.59371e+07" iyz="0.0"/>
+        </inertial>
+    </link>
+
+    <!-- Column -->
+    <joint name="base_column_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="base_column_link"/>
+    </joint>
+
+    <link name="base_column_link">
+        <visual>
+            <origin xyz="0.135 0 0.2" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/column_base.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.135 0 0.2" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/column_base.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="4.797"/>
+            <inertia ixx="1.01100e+09" iyy="9.45199e+07" izz="9.47275e+08" ixy="-9.00000e-03" ixz="-8.00000e-03" iyz="2.36858e+08"/>
+        </inertial>
+    </link>
+
+    <joint name="inner_column_joint" type="prismatic">
+        <axis xyz="0 0 1" />
+        <limit velocity="0.01" effort="1000" lower="0" upper="0.50"/>
+        <origin xyz="0.135 0 0.05" rpy="0 0 0"/>
+        <parent link="base_column_link"/>
+        <child link="inner_column_link"/>
+    </joint>
+
+    <link name="inner_column_link">
+        <visual>
+            <origin xyz="0 0 0.4" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/column_inner.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0.4" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/column_inner.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="2.349"/>
+            <inertia ixx="6.16980e+08" iyy="4.39384e+07" izz="5.85545e+08" ixy="7.48858e+05" ixz="1.26949e+05" iyz="1.35294e+08"/>
+        </inertial>
+    </link>
+
+    <!-- Torso -->
+    <joint name="torso_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+        <parent link="inner_column_link"/>
+        <child link="torso_link"/>
+    </joint>
+
+    <link name="torso_link">
+        <visual>
+            <origin xyz="-0.0432 0 0.675" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/torso.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="-0.0081 0 0.55" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.297 0.432 0.405"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="18.232"/>
+            <inertia ixx="7.07404e+09" iyy="7.93876e+08" izz="6.78660e+09" ixy="-5.74440e+07" ixz="-1.45790e+07" iyz="1.56352e+09"/>
+        </inertial>
+    </link>
+
+    <!-- head(Pan(neck), Tile(head), Kinect V2)-->
+    <joint name="torso_neck_joint" type="fixed">
+        <origin xyz="0 0 -0.0675" rpy="0 0 0"/>
+        <parent link="torso_link"/>
+        <child link="neck_link"/>
+    </joint>
+
+    <link name="neck_link">
+        <visual>
+            <origin xyz="-0.135 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/neck.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <inertial>
+            <mass value="0.732"/>
+            <inertia ixx="4.90438e+08" iyy="2.52873e+07" izz="4.65475e+08" ixy="-4.24542e+03" ixz="-9.69919e+02" iyz="1.07698e+08"/>
+        </inertial>
+    </link>
+
+    <joint name="neck_joint" type="revolute"> 
+        <axis xyz="0 0 1" />
+        <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+        <dynamics damping="0.7"/>
+        <origin xyz="0.0621 0 0.9099" rpy="0 0.0 0"/>
+        <parent link="neck_link"/>
+        <child link="head_link"/>
+    </joint>
+
+    <link name="head_link">
+        <visual>
+            <origin xyz="-0.1971 0 -0.9126" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/neck_head.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <inertial>
+            <mass value="0.087"/>
+            <inertia ixx="6.80975e+07" iyy="3.08478e+06" izz="6.52339e+07" ixy="-2.97713e+05" ixz="-6.25864e+04" iyz="1.38758e+07"/>
+        </inertial>
+    </link>
+
+    <!-- <joint name="head_joint" type="revolute"> 
+        <axis xyz="0 -1 0" />
+        <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+        <dynamics damping="0.7"/>
+        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+        <parent link="head_link"/>
+        <child link="head_kinect_link"/>
+    </joint>
+
+    <link name="head_kinect_link">
+        <visual>
+            <origin xyz="-0.2295 0 -0.945" rpy="0 0 0"/>
+            <geometry>
+                <mesh
+                    filename="package://humic_description/meshes/STL/head_kinect.stl" scale="0.027 0.027 0.027"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0.0648" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.0945 0.2835 0.0864"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1.463"/>
+            <inertia ixx="1.33775e+09" iyy="3.08478e+06" izz="1.27157e+09" ixy="1.06009e+06" ixz="2.26498e+05" iyz="1.38758e+07"/>
+        </inertial>
+    </link> -->
+
+    <!-- Camera Sensor -->
+    <!-- <joint name="camera_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="head_kinect_link"/>
+        <child link="camera_link"/>
+    </joint>
+
+    <link name="camera_link">
+        <visual>
+            <origin xyz="0.033 -0.1026 0.0675" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.01 0.01"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link> -->
+
+    <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
+    <xacro:VLP-16 parent="head_link" name="velodyne" topic="/velodyne_points" organize_cloud="${organize_cloud}" hz="10" samples="440" gpu="${gpu}">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:VLP-16>
+
+    <!-- IMU Sensor -->
+    <joint name="imu_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="torso_link"/>
+        <child link="imu_link"/>
+    </joint>
+
+    <link name="imu_link">
+        <visual>
+            <origin xyz="0.0621 0.0216 0.6615" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.00135 0.0054 0.0054"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+
+    <xacro:if value="$(arg arms)">
+        <!-- Right ARM -->
+        <joint name="r_arm_body_joint" type="fixed">
+            <origin xyz="0 0 -0.0675" rpy="0 0 0"/>
+            <parent link="torso_link"/>
+            <child link="r_shoulder_link"/>
+        </joint>
+
+        <link name="r_shoulder_link">
+            <visual>
+                <origin xyz="-0.134 0.001 0.003" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_shoulder.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.134 0.001 0.003" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_shoulder.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.324"/>
+                <inertia ixx="1.58637e+08" iyy="2.64707e+07" izz="1.72867e+08" ixy="-5.51744e+07" ixz="-1.09893e+07" iyz="3.03653e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="r_shoulder_joint" type="revolute">
+            <axis xyz="0 -1 0" />
+            <limit velocity="6.5" effort="1000" lower="${-pi}" upper="${pi}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0108 -0.3321 0.729" rpy="0 0 0"/>
+            <parent link="r_shoulder_link"/>
+            <child link="r_upperArm_link"/>
+        </joint>
+
+        <link name="r_upperArm_link">
+            <visual>
+                <origin xyz="-0.1458 0.3375 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_upperArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 0.3375 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_upperArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.353"/>
+                <inertia ixx="1.73491e+08" iyy="4.90592e+07" izz="2.08142e+08" ixy="-8.33193e+07" ixz="-1.67769e+07" iyz="3.34583e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="r_upperArm_joint" type="revolute">
+            <axis xyz="1 0 0" />
+            <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 -0.0297 0" rpy="${-pi*0.5} 0 0"/>
+            <parent link="r_upperArm_link"/>
+            <child link="r_elbow_link"/>
+        </joint>
+
+        <link name="r_elbow_link">
+            <visual>
+                <origin xyz="-0.1458 0.3672 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_elbow.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 0.3672 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_elbow.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.529"/>
+                <inertia ixx="1.38870e+08" iyy="6.80593e+07" izz="1.85969e+08" ixy="-8.50240e+07" ixz="-2.38516e+07" iyz="3.52215e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="r_elbow_joint" type="revolute">
+            <axis xyz="1 0 0" />
+            <limit velocity="6.5" effort="1000" lower="${-pi*0.25}" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0.0297 -0.2835" rpy="${pi*0.5} 0 0"/>
+            <parent link="r_elbow_link"/>
+            <child link="r_foreArm_link"/>
+        </joint>
+
+        <link name="r_foreArm_link">
+            <visual>
+                <origin xyz="-0.1458 0.3375 -0.4482" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_foreArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 0.3375 -0.4482" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_foreArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.501"/>
+                <inertia ixx="5.38306e+07" iyy="6.94958e+07" izz="1.03905e+08" ixy="-5.05255e+07" ixz="-2.36971e+07" iyz="2.00992e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="r_foreArm_joint" type="revolute">
+            <axis xyz="0 0 -1" />
+            <limit velocity="6.5" effort="1000" lower="${-pi}" upper="${pi}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 -0.0297 -0.243" rpy="0 0 0"/>
+            <parent link="r_foreArm_link"/>
+            <child link="r_lowerArm_link"/>
+        </joint>
+
+        <link name="r_lowerArm_link">
+            <visual>
+                <origin xyz="-0.1458 0.3672 -0.2052" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_lowerArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 0.3672 -0.2052" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_lowerArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.144"/>
+                <inertia ixx="6.68413e+06" iyy="1.98639e+07" izz="2.10626e+07" ixy="-8.18631e+06" ixz="-6.74644e+06" iyz="3.22949e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="r_lowerArm_joint" type="revolute">
+            <axis xyz="1 0 0" />
+            <limit velocity="13" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0324" rpy="0 0 0"/>
+            <parent link="r_lowerArm_link"/>
+            <child link="r_wrist_link"/>
+        </joint>
+
+        <link name="r_wrist_link">
+            <visual>
+                <origin xyz="-0.1458 0.3672 -0.1728" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_wrist.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 0.3672 -0.1728" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_wrist.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.163"/>
+                <inertia ixx="4.76597e+06" iyy="2.26942e+07" izz="2.11061e+07" ixy="-5.33281e+06" ixz="-7.80384e+06" iyz="2.14027e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="r_wrist_joint" type="revolute">
+            <axis xyz="0 0 -1" />
+            <limit velocity="13" effort="1000" lower="${-pi}" upper="${pi}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.1296" rpy="0 0 0"/>
+            <parent link="r_wrist_link"/>
+            <child link="r_hand_link"/>
+        </joint>
+        
+        <link name="r_hand_link">
+            <visual>
+                <origin xyz="-0.1458 0.3672 -0.0405" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_hand.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 0.3672 -0.0405" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_hand.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.072"/>
+                <inertia ixx="1.38325e+06" iyy="9.65946e+06" izz="8.41135e+06" ixy="7.83401e+04" ixz="-3.27407e+06" iyz="-2.39035e+04"/>
+            </inertial>
+        </link>
+
+        <joint name="r_hand_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <parent link="r_hand_link"/>
+            <child link="r_finger_link"/>
+        </joint>
+
+        <link name="r_finger_link">
+            <inertial>
+                <mass value="0.005"/>
+                <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" ixz="0.0" iyz="0.0"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger1_1_joint" type="revolute">
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0324 -0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="r_finger_link"/>
+            <child link="r_finger1_1_link"/>
+        </joint>
+        
+        <link name="r_finger1_1_link">
+            <visual>
+                <origin xyz="-0.1782 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger1_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1782 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger1_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.054"/>
+                <inertia ixx="2.00226e+06" iyy="8.34899e+06" izz="7.29389e+06" ixy="1.76606e+06" ixz="-3.22704e+06" iyz="-8.35818e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger1_2_joint" type="revolute"> 
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.054" rpy="0 0 0"/>
+            <parent link="r_finger1_1_link"/>
+            <child link="r_finger1_2_link"/>
+        </joint>
+        
+        <link name="r_finger1_2_link">
+            <visual>
+                <origin xyz="-0.1782 0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger1_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1782 0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger1_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.050"/>
+                <inertia ixx="2.35967e+06" iyy="7.74258e+06" izz="7.26480e+06" ixy="2.42117e+06" ixz="-2.99356e+06" iyz="-1.14637e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger2_1_joint" type="revolute">
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0108 -0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="r_finger_link"/>
+            <child link="r_finger2_1_link"/>
+        </joint>
+        
+        <link name="r_finger2_1_link">
+            <visual>
+                <origin xyz="-0.1566 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger2_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1566 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger2_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.054"/>
+                <inertia ixx="1.66064e+06" iyy="8.00703e+06" izz="7.29424e+06" ixy="1.76673e+06" ixz="-2.84288e+06" iyz="-7.36602e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger2_2_joint" type="revolute"> 
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0567" rpy="0 0 0"/>
+            <parent link="r_finger2_1_link"/>
+            <child link="r_finger2_2_link"/>
+        </joint>
+        
+        <link name="r_finger2_2_link">
+            <visual>
+                <origin xyz="-0.1566 0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger2_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1566 0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger2_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.050"/>
+                <inertia ixx="2.04291e+06" iyy="7.42535e+06" izz="7.26528e+06" ixy="2.42180e+06" ixz="-2.63735e+06" iyz="-1.01023e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger3_1_joint" type="revolute"> 
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="-0.0108 -0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="r_finger_link"/>
+            <child link="r_finger3_1_link"/>
+        </joint>
+        
+        <link name="r_finger3_1_link">
+            <visual>
+                <origin xyz="-0.135 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger3_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.135 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger3_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.047"/>
+                <inertia ixx="1.14431e+06" iyy="6.66013e+06" izz="6.27001e+06" ixy="1.46901e+06" ixz="-2.12432e+06" iyz="-5.29681e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger3_2_joint" type="revolute"> 
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0459" rpy="0 0 0"/>
+            <parent link="r_finger3_1_link"/>
+            <child link="r_finger3_2_link"/>
+        </joint>
+        
+        <link name="r_finger3_2_link">
+            <visual>
+                <origin xyz="-0.135 0.378 0.1107" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger3_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.135 0.378 0.1107" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger3_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.049"/>
+                <inertia ixx="1.63689e+06" iyy="7.02269e+06" izz="7.04004e+06" ixy="2.24869e+06" ixz="-2.24091e+06" iyz="-8.11249e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger4_1_joint" type="revolute"> 
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="-0.0324 -0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="r_finger_link"/>
+            <child link="r_finger4_1_link"/>
+        </joint>
+        
+        <link name="r_finger4_1_link">
+            <visual>
+                <origin xyz="-0.1134 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger4_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1134 0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger4_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.040"/>
+                <inertia ixx="7.58548e+05" iyy="5.51043e+06" izz="5.33369e+06" ixy="1.19722e+06" ixz="-1.53370e+06" iyz="-3.64204e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="r_finger4_2_joint" type="revolute">
+            <axis xyz="1 0 0" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0405" rpy="0 0 0"/>
+            <parent link="r_finger4_1_link"/>
+            <child link="r_finger4_2_link"/>
+        </joint>
+        
+        <link name="r_finger4_2_link">
+            <visual>
+                <origin xyz="-0.1134 0.378 0.1053" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger4_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1134 0.378 0.1053" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_finger4_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.047"/>
+                <inertia ixx="1.20559e+06" iyy="6.45087e+06" izz="6.56048e+06" ixy="1.95416e+06" ixz="-1.79625e+06" iyz="-5.94794e+05"/>
+            </inertial>
+        </link>
+        
+        <joint name="r_thumb_joint" type="revolute">
+            <axis xyz="0 0 1" />
+            <limit velocity="3" effort="1000" lower="0" upper="${pi*0.25}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0135 0.0216 -0.054" rpy="0 0 ${-pi*0.25}"/>
+            <parent link="r_finger_link"/>
+            <child link="r_thumb_link"/>
+        </joint>
+        
+        <link name="r_thumb_link">
+            <visual>
+                <origin xyz="-0.1539 0.3402 0.0135" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_thumb.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1539 0.3402 0.0135" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/r_thumb.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.063"/>
+                <inertia ixx="1.64286e+06" iyy="7.40185e+06" izz="5.91536e+06" ixy="5.87329e+05" ixz="-3.01472e+06" iyz="-3.10704e+05"/>
+            </inertial>
+        </link>
+
+        <!-- Left ARM -->
+        <joint name="l_arm_body_joint" type="fixed">
+            <origin xyz="0 0 -0.0675" rpy="0 0 0"/>
+            <parent link="torso_link"/>
+            <child link="l_shoulder_link"/>
+        </joint>
+
+        <link name="l_shoulder_link">
+            <visual>
+                <origin xyz="-0.134 0.001 0.003" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_shoulder.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.134 0.001 0.003" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_shoulder.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.324"/>
+                <inertia ixx="1.58637e+08" iyy="2.64707e+07" izz="1.72867e+08" ixy="5.51744e+07" ixz="1.09893e+07" iyz="3.03653e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="l_shoulder_joint" type="revolute"> 
+            <axis xyz="0 1 0" />
+            <limit velocity="6.5" effort="1000" lower="${-pi}" upper="${pi}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0108 0.3321 0.729" rpy="0 0 0"/>
+            <parent link="l_shoulder_link"/>
+            <child link="l_upperArm_link"/>
+        </joint>
+
+        <link name="l_upperArm_link">
+            <visual>
+                <origin xyz="-0.1458 -0.3375 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_upperArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 -0.3375 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_upperArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.353"/>
+                <inertia ixx="1.73201e+08" iyy="4.87701e+07" izz="2.08141e+08" ixy="8.33190e+07" ixz="1.64043e+07" iyz="3.27317e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="l_upperArm_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0.0297 0" rpy="${pi*0.5} 0 0"/>
+            <parent link="l_upperArm_link"/>
+            <child link="l_elbow_link"/>
+        </joint>
+
+
+        <link name="l_elbow_link">
+            <visual>
+                <origin xyz="-0.1458 -0.3672 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_elbow.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 -0.3672 -0.7317" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_elbow.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.529"/>
+                <inertia ixx="1.38809e+08" iyy="6.79988e+07" izz="1.85969e+08" ixy="8.50239e+07" ixz="2.37845e+07" iyz="3.50234e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="l_elbow_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="6.5" effort="1000" lower="${-pi*0.25}" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 -0.0297 -0.2835" rpy="${-pi*0.5} 0 0"/>
+            <parent link="l_elbow_link"/>
+            <child link="l_foreArm_link"/>
+        </joint>
+
+        <link name="l_foreArm_link">
+            <visual>
+                <origin xyz="-0.1458 -0.3375 -0.4482" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_foreArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 -0.3375 -0.4482" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_foreArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.501"/>
+                <inertia ixx="5.37910e+07" iyy="6.94563e+07" izz="1.03905e+08" ixy="5.05255e+07" ixz="2.36541e+07" iyz="2.00295e+07"/>
+            </inertial>
+        </link>
+
+        <joint name="l_foreArm_joint" type="revolute"> 
+            <axis xyz="0 0 -1" />
+            <limit velocity="6.5" effort="1000" lower="${-pi}" upper="${pi}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0.0297 -0.243" rpy="0 0 0"/>
+            <parent link="l_foreArm_link"/>
+            <child link="l_lowerArm_link"/>
+        </joint>
+
+        <link name="l_lowerArm_link">
+            <visual>
+                <origin xyz="-0.1458 -0.3672 -0.2052" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_lowerArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 -0.3672 -0.2052" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_lowerArm.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.144"/>
+                <inertia ixx="6.75832e+06" iyy="1.99380e+07" izz="2.10627e+07" ixy="8.18639e+06" ixz="6.83971e+06" iyz="3.27467e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="l_lowerArm_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="13" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0324" rpy="0 0 0"/>
+            <parent link="l_lowerArm_link"/>
+            <child link="l_wrist_link"/>
+        </joint>
+
+
+        <link name="l_wrist_link">
+            <visual>
+                <origin xyz="-0.1458 -0.3672 -0.1728" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_wrist.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 -0.3672 -0.1728" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_wrist.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.163"/>
+                <inertia ixx="4.65423e+06" iyy="2.25825e+07" izz="2.11060e+07" ixy="5.33269e+06" ixz="7.66325e+06" iyz="2.09064e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="l_wrist_joint" type="revolute"> 
+            <axis xyz="0 0 -1" />
+            <limit velocity="13" effort="1000" lower="${-pi}" upper="${pi}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.1296" rpy="0 0 0"/>
+            <parent link="l_wrist_link"/>
+            <child link="l_hand_link"/>
+        </joint>
+        
+        <link name="l_hand_link">
+            <visual>
+                <origin xyz="-0.1458 -0.3672 -0.0405" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_hand.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1458 -0.3672 -0.0405" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_hand.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.072"/>
+                <inertia ixx="1.36468e+06" iyy="9.64090e+06" izz="8.41131e+06" ixy="-7.81787e+04" ixz="3.25059e+06" iyz="-2.37841e+04"/>
+            </inertial>
+        </link>
+
+        <joint name="l_hand_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <parent link="l_hand_link"/>
+            <child link="l_finger_link"/>
+        </joint>
+
+        <link name="l_finger_link">
+            <inertial>
+                <mass value="0.005"/>
+                <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" ixz="0.0" iyz="0.0"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger1_1_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0324 0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="l_finger_link"/>
+            <child link="l_finger1_1_link"/>
+        </joint>
+        
+        <link name="l_finger1_1_link">
+            <visual>
+                <origin xyz="-0.1782 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger1_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1782 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger1_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.054"/>
+                <inertia ixx="1.97821e+06" iyy="8.32441e+06" izz="7.29442e+06" ixy="-1.76709e+06" ixz="3.20096e+06" iyz="-8.29521e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger1_2_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.054" rpy="0 0 0"/>
+            <parent link="l_finger1_1_link"/>
+            <child link="l_finger1_2_link"/>
+        </joint>
+        
+        <link name="l_finger1_2_link">
+            <visual>
+                <origin xyz="-0.1782 -0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger1_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1782 -0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger1_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.050"/>
+                <inertia ixx="2.33631e+06" iyy="7.71849e+06" izz="7.26553e+06" ixy="-2.42213e+06" ixz="2.96800e+06" iyz="-1.13701e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger2_1_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0108 0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="l_finger_link"/>
+            <child link="l_finger2_1_link"/>
+        </joint>
+        
+        <link name="l_finger2_1_link">
+            <visual>
+                <origin xyz="-0.1566 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger2_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1566 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger2_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.054"/>
+                <inertia ixx="1.63918e+06" iyy="7.98538e+06" izz="7.29442e+06" ixy="-1.76709e+06" ixz="2.81680e+06" iyz="-7.29967e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger2_2_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0567" rpy="0 0 0"/>
+            <parent link="l_finger2_1_link"/>
+            <child link="l_finger2_2_link"/>
+        </joint>
+        
+        <link name="l_finger2_2_link">
+            <visual>
+                <origin xyz="-0.1566 -0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger2_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1566 -0.378 0.1215" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger2_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.050"/>
+                <inertia ixx="2.02195e+06" iyy="7.40414e+06" izz="7.26553e+06" ixy="-2.42213e+06" ixz="2.61180e+06" iyz="-1.00056e+06"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger3_1_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="-0.0108 0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="l_finger_link"/>
+            <child link="l_finger3_1_link"/>
+        </joint>
+        
+        <link name="l_finger3_1_link">
+            <visual>
+                <origin xyz="-0.135 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger3_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.135 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger3_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.047"/>
+                <inertia ixx="1.12808e+06" iyy="6.64404e+06" izz="6.26987e+06" ixy="-1.46874e+06" ixz="2.10188e+06" iyz="-5.23975e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger3_2_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0459" rpy="0 0 0"/>
+            <parent link="l_finger3_1_link"/>
+            <child link="l_finger3_2_link"/>
+        </joint>
+        
+        <link name="l_finger3_2_link">
+            <visual>
+                <origin xyz="-0.135 -0.378 0.1107" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger3_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.135 -0.378 0.1107" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger3_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.049"/>
+                <inertia ixx="1.61883e+06" iyy="7.00484e+06" izz="7.03984e+06" ixy="-2.24841e+06" ixz="2.21603e+06" iyz="-8.02133e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger4_1_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="-0.0324 0.0162 -0.0972" rpy="0 0 0"/>
+            <parent link="l_finger_link"/>
+            <child link="l_finger4_1_link"/>
+        </joint>
+        
+        <link name="l_finger4_1_link">
+            <visual>
+                <origin xyz="-0.1134 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger4_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1134 -0.378 0.06885" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger4_1.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.040"/>
+                <inertia ixx="7.46660e+05" iyy="5.49889e+06" izz="5.33334e+06" ixy="-1.19649e+06" ixz="1.51461e+06" iyz="-3.59442e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="l_finger4_2_joint" type="revolute"> 
+            <axis xyz="-1 0 0" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.5}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0 0 -0.0405" rpy="0 0 0"/>
+            <parent link="l_finger4_1_link"/>
+            <child link="l_finger4_2_link"/>
+        </joint>
+        
+        <link name="l_finger4_2_link">
+            <visual>
+                <origin xyz="-0.1134 -0.378 0.1053" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger4_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1134 -0.378 0.1053" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_finger4_2.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.047"/>
+                <inertia ixx="1.19093e+06" iyy="6.43677e+06" izz="6.55992e+06" ixy="-1.95331e+06" ixz="1.77294e+06" iyz="-5.86803e+05"/>
+            </inertial>
+        </link>
+
+        <joint name="l_thumb_joint" type="revolute"> 
+            <axis xyz="0 0 -1" />
+            <limit velocity="10" effort="1000" lower="0" upper="${pi*0.25}" />
+            <dynamics damping="0.7"/>
+            <origin xyz="0.0135 -0.0216 -0.054" rpy="0 0 ${pi*0.25}"/>
+            <parent link="l_finger_link"/>
+            <child link="l_thumb_link"/>
+        </joint>
+        
+        <link name="l_thumb_link">
+            <visual>
+                <origin xyz="-0.1539 -0.3402 0.0135" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_thumb.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+
+            <collision>
+                <origin xyz="-0.1539 -0.3402 0.0135" rpy="0 0 0"/>
+                <geometry>
+                    <mesh
+                        filename="package://humic_description/meshes/STL/l_thumb.stl" scale="0.027 0.027 0.027"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.063"/>
+                <inertia ixx="1.67987e+06" iyy="7.48346e+06" izz="5.95949e+06" ixy="-5.89484e+05" ixz="3.06129e+06" iyz="-3.14930e+05"/>
+            </inertial>
+        </link>
+
+    </xacro:if>
+
+</robot>

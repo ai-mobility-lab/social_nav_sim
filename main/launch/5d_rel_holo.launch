@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="configuration" default="5d_rel_holo"/>
+
+    <rosparam file="$(find main)/param/$(arg configuration)/environment.yaml" />
+    <rosparam file="$(find main)/param/$(arg configuration)/agent.yaml" />
+    <rosparam file="$(find main)/param/$(arg configuration)/obstacle.yaml" />
+
+    <!-- SET ENVIRONMENT -->
+    <include file="$(find environment)/launch/environment_node.launch"/>
+
+    <!-- SET AGENT -->
+    <include file="$(find agent)/launch/agent.launch"/>
+
+    <!-- SET OBSTACLE -->
+    <include file="$(find obstacle_manager)/launch/obstacle_manager.launch"/>
+
+</launch>

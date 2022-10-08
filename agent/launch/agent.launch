@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="agent" type="agent_node.py" name="agent_node" output="screen"/>
+</launch>

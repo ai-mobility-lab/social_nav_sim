@@ -1,0 +1,13 @@
+environment:
+  # radius of the circle where all humans start on
+  radius: 6.0
+  # time limit of each episode (second)
+  time_limit: 50
+  # length of each timestep/control frequency (second)
+  time_step: 0.25
+  # discomfort distance (m)
+  discomfort_dist: 0.25
+  # whether to automatically start the simulation when agent and obstacles are ready
+  auto_start: False
+  # whether to automatically finish the simulation when the agent reaches the goal
+  auto_termination: True

@@ -1,0 +1,90 @@
+environment:
+  # radius of the circle where all humans start on
+  radius: 6.0
+  # time limit of each episode (second)
+  time_limit: 50
+  # length of each timestep/control frequency (second)
+  time_step: 0.25
+  # total number of obstacles
+  num_obstacle: 5
+  # number of static obstacles
+  num_static: 1
+  # discomfort distance (m)
+  discomfort_dist: 0.25
+  # whether to automatically start the simulation when agent and obstacles are ready
+  auto_start: False
+  # whether to automatically finish the simulation when the agent reaches the goal
+  auto_termination: False
+
+agent:
+  # manually set initial positions of agent
+  # if the initial position is empty, the agent will have a random initial position
+  # ex) [x, y]
+  initial_position: []
+  robot:
+    # size of robot (m)
+    radius: 0.3
+    # preferred velocity (m/s)
+    v_pref: 1.0
+    # kinematics of robot
+    kinematics: "holonomic"
+
+obstacle:
+  # manually set initial positions of obstacles
+  # obstacles without initial position will have random initial position
+  # ex) [[x1,y1], [x2,y2], ...]
+  initial_position_list: []
+  # model names of objects to be displayed as static obstacles in the simulator
+  # static obstacles without object model names will be displayed as standing humans
+  # candidate model names can be found in a parameter named "model_path_dict" stated below
+  # ex) ["oak_tree", "figurin_3", ...]
+  ## OBJECTS WITH AN INDEX LARGER THAN num_static WILL BE IGNORED ##
+  object_name_list: []
+
+  human:
+    # humans' preferred velocity (m/s)
+    v_pref: 1.0
+    # size of a human (m)
+    radius: 0.3
+
+  visual:
+    actor_default_height: 1.02
+    actor_skin_list: ["moonwalk.dae",
+                      "run.dae",
+                      "sit_down.dae",
+                      "sitting.dae",
+                      "stand_up.dae",
+                      "stand.dae",
+                      "talk_a.dae",
+                      "talk_b.dae",
+                      "walk.dae"]
+
+    # model paths' default root directory: social_nav_sim/assets/models
+    # scale is either a list of 3 items(x, y, z) or a float(uniformly applied along x, y, z)
+    model_path_dict:
+      - name: "oak_tree"
+        path: "model://oak_tree"
+
+      - name: "box"
+        path: "model://big_box"
+
+      - name: "debris"
+        path: "model://debris_1_2"
+        
+      - name: "mailbox"
+        path: "model://mailbox_red"
+
+      - name: "trash_bin"
+        path: "model://trash_bin"
+
+      - name: "vase"
+        path: "model://vase_large_2"
+
+      - name: "table"
+        path: "model://cafe_table"
+
+      - name: "fire_hydrant"
+        path: "model://fire_hydrant"
+
+      - name: "chair"
+        path: "model://aws_robomaker_residential_ChairD_01"

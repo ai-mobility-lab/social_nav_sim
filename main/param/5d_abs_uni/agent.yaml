@@ -1,0 +1,51 @@
+agent:
+  robot:
+    # robot's preferred velocity (m/s)
+    v_pref: 1.0
+    # size of robot (m)
+    radius: 0.3
+    # FOV of robot (rad/pi)
+    FOV: 2.0
+    # kinematics of robot
+    kinematics: "unicycle"
+    # policy of robot
+    policy: "srnn"
+
+  # policy settings
+  policy:
+    srnn:
+      # set device: cuda or cpu
+      device: "cuda"
+      # absolute or relative
+      coord_frame: "absolute"
+      # ckpt_file
+      ckpt_file: 5d_abs_uni.pt
+      # torch_seed
+      torch_seed: 0
+      # action size
+      action_size: 2
+      # RNN size
+      human_node_rnn_size: 128
+      human_human_edge_rnn_size: 256
+      # Input and output size
+      human_node_input_size: 3
+      human_human_edge_input_size: 2
+      human_node_output_size: 256
+      # 7 (absolute) or 4 (relative)
+      robot_state_size: 7
+      # Embedding size
+      human_node_embedding_size: 64
+      human_human_edge_embedding_size: 64
+      # Attention vector dimension
+      attention_size: 64
+
+    orca:
+      neighbor_dist: 10
+      safety_space: 0.15
+      time_horizon: 5
+      time_horizon_obst: 5
+
+    social_force:
+      A: 2.
+      B: 1
+      KI: 1

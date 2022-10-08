@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package format="2">
+  <name>humic_description</name>
+  <version>1.0.0</version>
+  <description>
+    HCIR., The Humic description package
+  </description>
+  <license>Apache 2.0</license>
+  <author email="kyg1552@gamil.com">Kim Young Gi</author>
+  <maintainer email="kyg1552@gamil.com">Kim Young Gi</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>urdf</depend>
+  <depend>xacro</depend>
+</package>

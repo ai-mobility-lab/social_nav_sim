@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- Initialize agent & obstacle information and Create GAZEBO world -->
+    <node name="create_world" pkg="environment" type="generate_social_nav_world.py"/>
+    <arg name="world_file"  default="$(find environment)/worlds/social_nav_env.world"/>
+    <arg name="gui" default="true"/>
+    <arg name="gpu" default="false"/>
+    <arg name="arms" default="false"/>
+
+    <!-- start gazebo server with the created world file -->
+    <node name="gazebo" pkg="gazebo_ros" type="gzserver" output="screen"
+        args="$(arg world_file)" />
+    
+    <!-- start gazebo client -->
+    <group if="$(arg gui)">
+        <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
+    </group>
+
+    <!-- Load Humic URDF -->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find humic_description)/urdf/humic.urdf.xacro' gpu:=$(arg gpu) arms:=$(arg arms)"/>
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
+        <param name="use_gui" value="false"/>
+    </node>
+    <!-- Combine joint values -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+
+    <node name="environment_node" pkg="environment" type="environment_node.py" output="screen"/>
+
+</launch>
