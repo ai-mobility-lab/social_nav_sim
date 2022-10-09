@@ -87,7 +87,7 @@ roslaunch main 10s10d_orca.launch
 rosservice call /environment/power_switch "{}"
 ```
 
-<img src="/readme_figures/power_switch.png" width="1080" />
+<img src="/readme_figures/start.png" width="1080" />
 
 4. Watch the simulation running.
 
@@ -95,7 +95,7 @@ rosservice call /environment/power_switch "{}"
 
 5. A message announcing the terminal state of episode and statistics of all episodes will be displayed in the terminal
 
-<img src="/readme_figures/reset.png" width="1080" />
+<img src="/readme_figures/termination.png" width="1080" />
 
 6. Either one of following actions can be done:
 - Terminate the simulation by entering `ctrl + c` in the terminal.
