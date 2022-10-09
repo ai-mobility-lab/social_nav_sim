@@ -151,6 +151,6 @@ cp -r 5d_abs_holo/ $(new model name)/
 </details>
 
 # References
-- Agent & Simulation: DSRNN(https://github.com/Shuijing725/CrowdNav_DSRNN.git)
-- Robot model: Humic(https://github.com/SeoulTech-HCIRLab/Humic.git)
+- agent & simulation: DSRNN(https://github.com/Shuijing725/CrowdNav_DSRNN.git)
+- robot model: Humic(https://github.com/SeoulTech-HCIRLab/Humic.git)
 - animated_obstacle_plugin: gym_ped_sim(https://github.com/onlytailei/gym_ped_sim.git)
