@@ -78,6 +78,7 @@ source $(your catkin workspace)/devel/setup.bash
 roslaunch main 10s10d_orca.launch
 ```
 2. Wait unitl all modules are ready.
+<img src="/readme_figures/ready.jpg" width="450" />
 3. Call a ros service named `/environment/power_switch` to start a simulation episode.
 - The simulation can be turned on and off multiple times by calling the service repeatedly
 ```
