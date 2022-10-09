@@ -149,3 +149,8 @@ cp -r 5d_abs_holo/ $(new model name)/
 - object_name_list (names of objects to be spawned as static obstacles in the environment): `["oak_tree", "trash_bin", ...]` or `[]`(no objects)
   
 </details>
+
+# References
+- Agent & Simulation: DSRNN(https://github.com/Shuijing725/CrowdNav_DSRNN.git)
+- Robot model: Humic(https://github.com/SeoulTech-HCIRLab/Humic.git)
+- animated_obstacle_plugin: gym_ped_sim(https://github.com/onlytailei/gym_ped_sim.git)
