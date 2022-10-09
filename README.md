@@ -5,7 +5,7 @@ A number of walking or standing people and various types of static objects are s
 
 # Prerequisite
 This package has been verified in ubuntu 20.04, ROS Noetic, GAZEBO 11, Python3.8, PyTorch 1.7.1 with CUDA 11.0 and cuDNN 8.0.5.
-<details open>
+<details>
 <summary>NVIDIA Driver, CUDA Toolkit, and cuDNN</summary>
 
 Refer to the links below.
@@ -20,14 +20,14 @@ Refer to the links below.
 
 </details>
 
-<details open>
+<details>
 <summary>ROS Noetic(supported in Ubuntu 20.04)</summary>
 
 Install ROS Noetic(desktop-full) following the instructions in http://wiki.ros.org/noetic/Installation/Ubuntu.
 
 </details>
 
-<details open>
+<details>
 <summary>Python Packages</summary>
 
 Enter the following command in a terminal.
@@ -37,7 +37,7 @@ pip3 install numpy lxml
 
 </details>
 
-<details open>
+<details>
 <summary>PyTorch</summary>
 
 Install PyTorch 1.7.1 using the following command referenced from https://pytorch.org/get-started/previous-versions/
@@ -47,14 +47,14 @@ pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download.pyto
 
 </details>
 
-<details open>
+<details>
 <summary>Python-RVO2</summary>
 
 Refer to the following link: https://github.com/sybrenstuvel/Python-RVO2
 
 </details>
 
-<details open>
+<details>
 <summary>ROS packages</summary>
 
 ```
