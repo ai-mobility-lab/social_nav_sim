@@ -62,4 +62,64 @@ suo apt install ros-noetic-velodyne-driver ros-noetic-velodyne-description ros-n
 ```
 
 </details>
-# 
+
+# Installation
+Clone this repository in your catkin workspace and build.
+```
+cd $(your catkin workspace)/src
+git clone https://github.com/drancon/social_nav_sim.git
+catkin build
+source $(your catkin workspace)/devel/setup.bash
+```
+
+# Example
+1. Launch one of files in `main` package.
+```
+roslaunch main 10s10d_orca.launch
+```
+
+# How to run your own checkpoint file
+1. Put your checkpoint file in `agent/param/ckpts` folder.
+```
+cp $(checkpoint file name).pt $(your catkin workspace)/src/social_nav_sim/agent/param/ckpts/$(checkpoint file name).pt
+```
+2. create a new folder to contain parameters for your model by copying an existing folder in `main/param`
+```
+cd $(your catkin workspace)/src/social_nav_sim/main/param/
+cp -r 5d_abs_holo/ $(new model name)/
+```
+3. Change values in parameter files in a newly created folder to fit your checkpoint file's environment setting.
+
+**Noticeable Parameters**
+<details open>
+<summary>environment.yaml</summary>
+
+- auto_start (whether to automatically start the simulation when agent and obstacles are ready): `True` or `False`
+- auto_termination (whether to automatically finish the simulation when the agent reaches the terminal state): `True` or `False`
+  
+</details>
+
+<details open>
+<summary>agent.yaml</summary>
+
+- **robot**
+  - kinematics (kinematics of robot): `"holonomic"` or `"unicycle"`
+  - policy (policy of robot): `"srnn"`, `"orca"`, or `"social_force"`
+- **policy**
+  - **srnn**
+    - device (pytorch computing device): `"cuda"` or `"cpu"`
+    - coord_frame (reference coordinate frame of srnn): `"absolute"` or `"relative"`
+    - ckpt_file (name of your checkpoint file): `$(checkpoint file name).pt`
+    - robot_state_size (number of variables given to dsrnn as robot_state): `7`(absolute) or `4`(relative)
+  
+</details>
+
+<details open>
+<summary>obstacle.yaml</summary>
+
+- num_obstacle (total number of obstacles): `any positive integer`
+- num_static (number of static obstacles): `any positive integer' or '0`
+- initial_position_list (manually set initial position of obstacles): `[[x1,y1], [x2,y2], ...]` or `[]`(all random initial position)
+- object_name_list (names of objects to be spawned as static obstacles in the environment): `["oak_tree", "trash_bin", ...]` or `[]`(no objects)
+  
+</details>
