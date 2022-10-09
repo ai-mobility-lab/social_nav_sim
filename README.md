@@ -114,7 +114,7 @@ cp $(checkpoint file name).pt $(your catkin workspace)/src/social_nav_sim/agent/
 cd $(your catkin workspace)/src/social_nav_sim/main/param/
 cp -r 5d_abs_holo/ $(new model name)/
 ```
-3. Change values in parameter files in a newly created folder to fit your checkpoint file's environment setting.
+3. Change values in parameter files in the newly created folder to fit your checkpoint file's environment setting.
 
 **Noticeable Parameters**
 <details open>
@@ -149,6 +149,12 @@ cp -r 5d_abs_holo/ $(new model name)/
 - object_name_list (names of objects to be spawned as static obstacles in the environment): `["oak_tree", "trash_bin", ...]` or `[]`(no objects)
   
 </details>
+
+4. Copy a launch file in `main/launch` to create a new launch file and change value of argument `configuration` in the newly created launch file to your paremeter folder.
+```
+cd $(your catkin workspace)/src/social_nav_sim/main/launch/
+cp 5d_abs_holo.launch $(new model name).launch
+```
 
 # References
 - agent & simulation: DSRNN(https://github.com/Shuijing725/CrowdNav_DSRNN.git)
