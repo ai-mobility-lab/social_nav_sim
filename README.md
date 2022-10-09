@@ -78,14 +78,25 @@ source $(your catkin workspace)/devel/setup.bash
 roslaunch main 10s10d_orca.launch
 ```
 2. Wait unitl all modules are ready.
-<img src="/readme_figures/ready.jpg" width="450" />
+
+<img src="/readme_figures/ready.png" width="1080" />
+
 3. Call a ros service named `/environment/power_switch` to start a simulation episode.
 - The simulation can be turned on and off multiple times by calling the service repeatedly
 ```
 rosservice call /environment/power_switch "{}"
 ```
+
+<img src="/readme_figures/power_switch.png" width="1080" />
+
 4. Watch the simulation running.
+
+<img src="/readme_figures/simulation.png" width="1080" />
+
 5. A message announcing the terminal state of episode and statistics of all episodes will be displayed in the terminal
+
+<img src="/readme_figures/reset.png" width="1080" />
+
 6. Either one of following actions can be done:
 - Terminate the simulation by entering `ctrl + c` in the terminal.
 - Reset the environment for another simulation episode by calling a ros service named `/environment/reset`.
