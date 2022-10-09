@@ -17,6 +17,7 @@ class SRNN():
         torch.backends.cudnn.deterministic = True
         torch.set_num_threads(1)
         self.device = torch.device(config["device"])
+        
         # initialize srnn model
         self.actor_critic = Policy(config)
         self.actor_critic.load_state_dict(torch.load(config["ckpt_path"], map_location=self.device))
