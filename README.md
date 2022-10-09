@@ -50,8 +50,7 @@ pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download.pyto
 <details open>
 <summary>Python-RVO2</summary>
 
-Refer to the link below.
-https://github.com/sybrenstuvel/Python-RVO2
+Refer to the following link: https://github.com/sybrenstuvel/Python-RVO2
 
 </details>
 
