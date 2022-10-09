@@ -77,6 +77,17 @@ source $(your catkin workspace)/devel/setup.bash
 ```
 roslaunch main 10s10d_orca.launch
 ```
+2. Wait unitl all modules are ready.
+3. Call `/environment/power_switch` ros service to run a simulation episode. (You can easily find the command using tab key)
+```
+rosservice call /environment/power_switch "{}"
+```
+4. Watch the simulation running.
+5. A message announcing the terminal state of episode and statistics of all episodes will be displayed in the terminal
+6. You can either terminate the simulation by entering `ctrl + c` in terminal or reset the environment for another simulation episode using the following command. (You can easily find the command using tab key)
+```
+rosservice call /environment/reset "{}"
+```
 
 # How to run your own checkpoint file
 1. Put your checkpoint file in `agent/param/ckpts` folder.
@@ -102,11 +113,11 @@ cp -r 5d_abs_holo/ $(new model name)/
 <details open>
 <summary>agent.yaml</summary>
 
-- **robot**
+- robot
   - kinematics (kinematics of robot): `"holonomic"` or `"unicycle"`
   - policy (policy of robot): `"srnn"`, `"orca"`, or `"social_force"`
-- **policy**
-  - **srnn**
+- policy
+  - srnn
     - device (pytorch computing device): `"cuda"` or `"cpu"`
     - coord_frame (reference coordinate frame of srnn): `"absolute"` or `"relative"`
     - ckpt_file (name of your checkpoint file): `$(checkpoint file name).pt`
